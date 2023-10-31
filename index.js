@@ -1,17 +1,28 @@
 const http = require("http");
-const { indexRoute } = require("./routes/index.routes");
+//routes
+const { listRoute } = require("./app/routes/index.routes");
+//db
+const { connectToDB } = require("./app/database/db.index");
+//env config
+const dotenv = require("dotenv");
+dotenv.config();
 
-const port = process.env.PORT || 3000;
+//env
+const PORT = process.env.PORT || 3000;
+const MONGO_URL = process.env.MONGO_URL;
+
+//db config
+connectToDB(MONGO_URL)
 
 //creating server
-const server = http.createServer( async (req, res) => {
-  const route = req.url;
-  const method = req.method;
+const server = http.createServer(async (req, res) => {
+  res.setHeader("content-type", "application/json");
 
   //routing
-  indexRoute(req,res,route,method)
+  listRoute(req, res, req.params);
 });
 
-server.listen(port, () => {
-  console.log(`Server listening on port ${port}`);
+//getting up server
+server.listen(PORT, () => {
+  console.log(`Server listening on port ${PORT}`);
 });
